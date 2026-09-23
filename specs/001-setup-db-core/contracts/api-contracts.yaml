@@ -1,0 +1,128 @@
+openapi: 3.0.3
+info:
+  title: DIREMOR SAC - Core API Contracts
+  description: Contratos OpenAPI para la arquitectura base, autenticación y gestión de sucursales en Coolify.
+  version: 1.0.0
+paths:
+  /api/health:
+    get:
+      summary: Healthcheck de infraestructura y conectividad a PostgreSQL
+      description: Invocado por Traefik y Coolify para supervisar la salud del contenedor.
+      responses:
+        '200':
+          description: Servicio saludable y base de datos operativa.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+                  database:
+                    type: string
+                    example: connected
+                  timestamp:
+                    type: string
+                    format: date-time
+        '503':
+          description: Base de datos inaccesible o fallo de servicio.
+
+  /api/auth/login:
+    post:
+      summary: Autenticación de usuario y obtención de token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  format: password
+                  example: Diremor2026!
+      responses:
+        '200':
+          description: Autenticación exitosa.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  user:
+                    type: object
+                    properties:
+                      id_usuario:
+                        type: integer
+                        example: 1
+                      username:
+                        type: string
+                        example: admin
+                      nombre_completo:
+                        type: string
+                        example: Administrador General
+                      rol:
+                        type: string
+                        example: ADMIN
+                      sucursal_id:
+                        type: integer
+                        example: 1
+                      sucursal_nombre:
+                        type: string
+                        example: Casa Matriz - Santa Cruz
+        '401':
+          description: Credenciales inválidas.
+
+  /api/auth/me:
+    get:
+      summary: Perfil y permisos del usuario activo
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Información del usuario extraída del token JWT.
+        '401':
+          description: Token no provisto o expirado.
+
+  /api/sucursales:
+    get:
+      summary: Listado de sucursales activas de DIREMOR S.R.L.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de sucursales.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id_sucursal:
+                      type: integer
+                    codigo:
+                      type: string
+                    nombre:
+                      type: string
+                    ciudad:
+                      type: string
+                    es_matriz:
+                      type: boolean
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

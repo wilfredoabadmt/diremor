@@ -1,0 +1,68 @@
+version: '3.8'
+
+# DIREMOR SAC - Orquestación de Contenedores en Coolify PaaS
+# Cumple con Principio I (ACID), Principio II (Soberanía / Red Privada) y Principio III (Multi-Sucursal)
+
+services:
+  # Base de Datos Relacional PostgreSQL 16+
+  sac-postgres:
+    image: postgres:16-alpine
+    container_name: sac-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sac_diremor}
+      POSTGRES_USER: ${POSTGRES_USER:-sac_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-DiremorSecure2026_PostgresPass}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d:ro
+    networks:
+      - coolify-network
+    # El puerto 5432 NO se mapea al host para evitar exposición a internet pública
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sac_admin} -d ${POSTGRES_DB:-sac_diremor}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Backend API RESTful - Motor de Negocio y Facturación SIN
+  sac-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sac-api
+    restart: always
+    depends_on:
+      sac-postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PORT:-3000}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-sac_admin}:${POSTGRES_PASSWORD:-DiremorSecure2026_PostgresPass}@sac-postgres:5432/${POSTGRES_DB:-sac_diremor}
+      JWT_SECRET: ${JWT_SECRET:-DiremorSAC_SecureJWTKey_ChangeInProduction2026}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-8h}
+      SIN_MODALIDAD: ${SIN_MODALIDAD:-ELECTRONICA_EN_LINEA}
+    networks:
+      - coolify-network
+    # Enrutamiento mediante Traefik Proxy nativo de Coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sac-api.rule=Host(`${APP_DOMAIN:-sac.diremor.com}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.sac-api.entrypoints=websecure"
+      - "traefik.http.routers.sac-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.sac-api.loadbalancer.server.port=3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  coolify-network:
+    external: true
