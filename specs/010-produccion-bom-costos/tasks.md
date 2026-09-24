@@ -18,9 +18,9 @@
 
 ## Phase 2: Despliegue en Coolify y Verificación en Vivo (Principio IX)
 
-- [ ] **T007** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
-- [ ] **T008** Disparar despliegue en Coolify y confirmar estado saludable (`healthy`).
-- [ ] **T009** Crear y ejecutar script E2E en vivo (`scratch/test_live_010.js`):
+- [x] **T007** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
+- [x] **T008** Disparar despliegue en Coolify y confirmar estado saludable (`healthy`).
+- [x] **T009** Crear y ejecutar script E2E en vivo (`scratch/test_live_010.js`):
   - Creación de insumos y producto terminado.
   - Creación de receta BOM con insumos.
   - Emisión de orden de producción.
@@ -28,4 +28,4 @@
   - Imputación de MOD y CIF.
   - Finalización de orden, absorción de costos e ingreso de PT al Kardex valorado.
   - Validación de caminos infelices (sobregiro MP 400, re-finalización 409).
-- [ ] **T010** Ejecutar suite completa de no-regresión (003, 005, 006, 007, 008, 009).
+- [x] **T010** Ejecutar suite completa de no-regresión (003, 005, 006, 007, 008, 009).
