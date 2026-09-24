@@ -284,6 +284,12 @@ export function getPortalHtml(): string {
           <div class="module-name">Control de Cajas & Turnos</div>
           <div class="module-desc">Arqueos ciegos de corte, control de sobrantes/faltantes y movimientos de gaveta.</div>
         </div>
+
+        <div class="module-item">
+          <span class="module-badge" style="background: rgba(168, 85, 247, 0.15); color: #d8b4fe;">007-COTIZACIONES</span>
+          <div class="module-name">Cotizaciones & Pedidos</div>
+          <div class="module-desc">Presupuestos con vigencia temporal, márgenes y conversión directa a Venta POS.</div>
+        </div>
       </div>
 
       <div class="actions">
