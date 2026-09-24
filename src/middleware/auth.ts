@@ -17,16 +17,28 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.get('authorization') || (req.headers['authorization'] as string) || (req.headers['x-access-token'] as string);
+  let token: string | undefined;
+
+  if (authHeader) {
+    if (authHeader.startsWith('Bearer ') || authHeader.startsWith('bearer ')) {
+      token = authHeader.substring(7).trim();
+    } else {
+      token = authHeader.trim();
+    }
+  } else if (req.query && req.query.token) {
+    token = String(req.query.token);
+  }
 
   if (!token) {
+    console.warn('[AUTH WARNING] No token found. Received headers:', Object.keys(req.headers));
     res.status(401).json({ error: 'Acceso no autorizado: Token de sesión no provisto.' });
     return;
   }
 
   jwt.verify(token, JWT_SECRET, (err, decoded) => {
     if (err) {
+      console.warn('[AUTH ERROR] JWT verify failed:', err.message);
       res.status(401).json({ error: 'Acceso denegado: Token inválido o expirado.' });
       return;
     }
