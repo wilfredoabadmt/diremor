@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import { pool, query } from '../db.js';
 import { authenticateToken, AuthenticatedRequest, requireRole } from '../middleware/auth.js';
+import { initProveedoresSchema } from './proveedores.js';
 
 export const comprasRouter = Router();
 
@@ -11,6 +12,7 @@ comprasRouter.use(authenticateToken);
  * Inicialización segura e idempotente del esquema de compras y DUI
  */
 export async function initComprasSchema(): Promise<void> {
+  await initProveedoresSchema();
   const ddl = `
     CREATE TABLE IF NOT EXISTS compras_cabecera (
         id_compra BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
