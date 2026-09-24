@@ -25,12 +25,12 @@
 
 ## Phase 2: Despliegue en Coolify y Verificación en Vivo (Principio IX)
 
-- [ ] **T006** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
-- [ ] **T007** Disparar despliegue en Coolify y confirmar estado saludable (`running:healthy`).
-- [ ] **T008** Crear y ejecutar script E2E en vivo (`scratch/test_live_005.js`):
-  - Emisión de venta POS.
-  - Emisión de factura fiscal con generación de CUF y QR válidos.
-  - Intento de re-facturación sobre la misma venta (rechazo HTTP 409).
-  - Consulta de factura completa por ID y por ID de venta.
-  - Anulación de factura fiscal con motivo reglamentario.
-  - Intento de anular una factura ya anulada (rechazo HTTP 400).
+- [x] **T006** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
+- [x] **T007** Disparar despliegue en Coolify y confirmar estado saludable (`running:healthy`).
+- [x] **T008** Crear y ejecutar script E2E en vivo (`scratch/test_live_005.js`):
+  - [x] Emisión de venta POS.
+  - [x] Emisión de factura fiscal con generación de CUF y QR válidos (CUF `45CFE1988791131F2A6E355DC0E126124BA6AE06A3`).
+  - [x] Intento de re-facturación sobre la misma venta (rechazo HTTP 409).
+  - [x] Consulta de factura completa por ID y por ID de venta.
+  - [x] Anulación de factura fiscal con motivo reglamentario.
+  - [x] Intento de anular una factura ya anulada (rechazo HTTP 400). Todos los 9 tests E2E aprobados.
