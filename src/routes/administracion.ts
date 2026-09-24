@@ -41,6 +41,10 @@ export async function initAdministracionSchema(): Promise<void> {
             ALTER TABLE sucursales ADD COLUMN leyenda_fiscal TEXT DEFAULT 'Ley N° 453: El proveedor debe exhibir el precio total del bien o servicio en moneda nacional.';
         END IF;
 
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'sucursales' AND column_name = 'municipio') THEN
+            ALTER TABLE sucursales ADD COLUMN municipio VARCHAR(50) DEFAULT 'Santa Cruz de la Sierra';
+        END IF;
+
         IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'sucursales' AND column_name = 'codigo_punto_venta_sin') THEN
             ALTER TABLE sucursales ADD COLUMN codigo_punto_venta_sin INT DEFAULT 0;
         END IF;
@@ -252,7 +256,7 @@ administracionRouter.put('/sucursales/:id', requireRole('ADMIN'), async (req: Au
       `UPDATE sucursales
        SET nombre = COALESCE($1, nombre),
            direccion = COALESCE($2, direccion),
-           municipio = COALESCE($3, municipio),
+           ciudad = COALESCE($3, ciudad),
            telefono = COALESCE($4, telefono),
            email = COALESCE($5, email),
            leyenda_fiscal = COALESCE($6, leyenda_fiscal),

@@ -253,7 +253,7 @@ impresionRouter.get('/comprobante/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const cabRes = await query(
-      `SELECT a.*, s.nombre AS sucursal_nombre, s.municipio, s.direccion, u.nombre_completo AS usuario_nombre
+      `SELECT a.*, s.nombre AS sucursal_nombre, s.ciudad AS municipio, s.direccion, u.nombre_completo AS usuario_nombre
        FROM asientos_cabecera a
        JOIN sucursales s ON a.id_sucursal = s.id_sucursal
        JOIN usuarios u ON a.id_usuario = u.id_usuario
@@ -388,7 +388,7 @@ impresionRouter.get('/factura/:id', async (req: Request, res: Response) => {
     const facRes = await query(
       `SELECT f.*, v.total_bruto, v.descuento, v.total_neto, v.fecha_venta,
               c.razon_social AS cliente_razon, c.nit_ci AS cliente_nit,
-              s.nombre AS sucursal_nombre, s.direccion, s.municipio, s.leyenda_fiscal, s.telefono
+              s.nombre AS sucursal_nombre, s.direccion, s.ciudad AS municipio, s.leyenda_fiscal, s.telefono
        FROM facturas_fiscales f
        JOIN ventas_cabecera v ON f.id_venta = v.id_venta
        JOIN clientes c ON v.id_cliente = c.id_cliente
@@ -527,7 +527,7 @@ impresionRouter.get('/recibo-cobro/:id', async (req: Request, res: Response) => 
 
     const cobRes = await query(
       `SELECT cb.*, c.numero_documento_ref, cli.razon_social AS cliente_razon, cli.nit_ci AS cliente_nit,
-              s.nombre AS sucursal_nombre, s.municipio, u.nombre_completo AS cajero_nombre
+              s.nombre AS sucursal_nombre, s.ciudad AS municipio, u.nombre_completo AS cajero_nombre
        FROM cxc_cobros cb
        JOIN cxc_cuentas c ON cb.id_cxc = c.id_cxc
        JOIN clientes cli ON c.id_cliente = cli.id_cliente
@@ -637,7 +637,7 @@ impresionRouter.get('/proforma/:id', async (req: Request, res: Response) => {
 
     const cotRes = await query(
       `SELECT c.*, cli.razon_social AS cliente_razon, cli.nit_ci AS cliente_nit, cli.telefono AS cliente_tel,
-              s.nombre AS sucursal_nombre, s.municipio, u.nombre_completo AS vendedor_nombre
+              s.nombre AS sucursal_nombre, s.ciudad AS municipio, u.nombre_completo AS vendedor_nombre
        FROM cotizaciones_cabecera c
        JOIN clientes cli ON c.id_cliente = cli.id_cliente
        JOIN sucursales s ON c.id_sucursal = s.id_sucursal
