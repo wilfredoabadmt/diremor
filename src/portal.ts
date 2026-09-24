@@ -272,6 +272,12 @@ export function getPortalHtml(): string {
           <div class="module-name">Ventas & Despacho</div>
           <div class="module-desc">Descargo atómico en Kardex vía triggers PostgreSQL y anulación controlada.</div>
         </div>
+
+        <div class="module-item">
+          <span class="module-badge" style="background: rgba(16, 185, 129, 0.15); color: #6ee7b7;">005-FISCAL</span>
+          <div class="module-name">Facturación en Línea (SIN)</div>
+          <div class="module-desc">RND 102100000011, CUF algorítmico, CUFD, códigos QR tributarios y anulación.</div>
+        </div>
       </div>
 
       <div class="actions">
