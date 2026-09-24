@@ -550,7 +550,7 @@ contabilidadRouter.get('/libros-fiscales/compras-iva', async (req: Authenticated
       `SELECT c.id_compra,
               c.tipo_compra,
               c.numero_factura_proveedor,
-              dui.numero_dui,
+              dui.numero_poliza_dui AS numero_dui,
               c.fecha_compra,
               c.monto_total_neto AS importe_total,
               p.nit_ci AS nit_proveedor,
@@ -558,7 +558,7 @@ contabilidadRouter.get('/libros-fiscales/compras-iva', async (req: Authenticated
               ROUND((c.monto_total_neto * 0.13), 2) AS credito_fiscal_iva
        FROM compras_cabecera c
        JOIN proveedores p ON c.id_proveedor = p.id_proveedor
-       LEFT JOIN compras_importacion_dui dui ON c.id_compra = dui.id_compra
+       LEFT JOIN importaciones_dui dui ON c.id_compra = dui.id_compra
        WHERE date_trunc('month', c.fecha_compra) = date_trunc('month', $1::date)
        ORDER BY c.fecha_compra ASC, c.id_compra ASC`,
       [fechaFiltro]
