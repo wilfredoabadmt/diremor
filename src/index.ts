@@ -17,6 +17,7 @@ import { comprasRouter } from './routes/compras.js';
 import { traspasosRouter } from './routes/traspasos.js';
 import { ajustesRouter } from './routes/ajustes.js';
 import { produccionRouter } from './routes/produccion.js';
+import { tesoreriaRouter } from './routes/tesoreria.js';
 import { getPortalHtml } from './portal.js';
 
 dotenv.config();
@@ -58,7 +59,8 @@ app.get('/api', (_req, res) => {
       compras: 'GET /api/compras, POST /api/compras, POST /api/compras/importacion-dui, GET /api/compras/alertas-reprecio, GET /api/compras/:id',
       traspasos: 'GET /api/traspasos, POST /api/traspasos, GET /api/traspasos/:id, POST /api/traspasos/:id/recibir, POST /api/traspasos/:id/rechazar',
       ajustes: 'GET /api/ajustes, POST /api/ajustes, GET /api/ajustes/:id',
-      produccion: 'GET /api/produccion/recetas, POST /api/produccion/recetas, GET /api/produccion/ordenes, POST /api/produccion/ordenes, POST /api/produccion/ordenes/:id/consumir-mp, POST /api/produccion/ordenes/:id/imputar-costos, POST /api/produccion/ordenes/:id/finalizar'
+      produccion: 'GET /api/produccion/recetas, POST /api/produccion/recetas, GET /api/produccion/ordenes, POST /api/produccion/ordenes, POST /api/produccion/ordenes/:id/consumir-mp, POST /api/produccion/ordenes/:id/imputar-costos, POST /api/produccion/ordenes/:id/finalizar',
+      tesoreria: 'GET /api/tesoreria/cxc, POST /api/tesoreria/cxc, POST /api/tesoreria/cxc/cobros, GET /api/tesoreria/cxc/antiguedad-saldos, GET /api/tesoreria/cxp, POST /api/tesoreria/cxp, POST /api/tesoreria/cxp/pagos'
     }
   });
 });
@@ -79,6 +81,7 @@ app.use('/api/compras', comprasRouter);
 app.use('/api/traspasos', traspasosRouter);
 app.use('/api/ajustes', ajustesRouter);
 app.use('/api/produccion', produccionRouter);
+app.use('/api/tesoreria', tesoreriaRouter);
 
 // Manejador de rutas no encontradas
 app.use((_req, res) => {

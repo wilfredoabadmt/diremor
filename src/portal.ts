@@ -308,6 +308,12 @@ export function getPortalHtml(): string {
           <div class="module-name">Costos & Producción Fabril</div>
           <div class="module-desc">Recetas BOM, órdenes de trabajo, absorción de MP, MOD, CIF e ingreso valorado.</div>
         </div>
+
+        <div class="module-item">
+          <span class="module-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">011-TESORERÍA & CARTERA</span>
+          <div class="module-name">CxC, CxP & Amortizaciones</div>
+          <div class="module-desc">Control de cartera, recibos de cobranza, comprobantes de egreso, mora y antigüedad de saldos.</div>
+        </div>
       </div>
 
       <div class="actions">
