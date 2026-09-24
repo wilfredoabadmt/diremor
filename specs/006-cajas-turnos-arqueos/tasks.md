@@ -19,15 +19,15 @@
 
 ## Phase 2: Despliegue en Coolify y Verificación en Vivo (Principio IX)
 
-- [ ] **T008** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
-- [ ] **T009** Disparar despliegue en Coolify y confirmar estado saludable (`running:healthy`).
-- [ ] **T010** Crear y ejecutar script E2E en vivo (`scratch/test_live_006.js`):
-  - Creación y listado de caja física.
-  - Apertura de turno con monto inicial de 200.00 Bs.
-  - Intento de abrir un segundo turno concurrente (rechazo HTTP 409).
-  - Consulta de turno activo.
-  - Emisión de venta POS en efectivo durante el turno.
-  - Registro de movimiento manual (ingreso de 50 Bs y egreso de 20 Bs).
-  - Ejecución de arqueo ciego declarando efectivo físico.
-  - Comprobación de saldo teórico exacto y cálculo de diferencia de corte.
-  - Intento de registrar movimiento o re-cerrar turno cerrado (rechazo HTTP 400).
+- [x] **T008** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
+- [x] **T009** Disparar despliegue en Coolify y confirmar estado saludable (`running:healthy`).
+- [x] **T010** Crear y ejecutar script E2E en vivo (`scratch/test_live_006.js`):
+  - [x] Creación y listado de caja física (auto-creación de `CAJA-01`).
+  - [x] Apertura de turno con monto inicial de 200.00 Bs.
+  - [x] Intento de abrir un segundo turno concurrente (rechazo HTTP 409).
+  - [x] Consulta de turno activo.
+  - [x] Emisión de venta POS en efectivo durante el turno (300.00 Bs).
+  - [x] Registro de movimiento manual (ingreso de 50 Bs y egreso de 20 Bs).
+  - [x] Ejecución de arqueo ciego declarando efectivo físico (530.00 Bs).
+  - [x] Comprobación de saldo teórico exacto (530.00 Bs) y cálculo de diferencia de corte (0.00 Bs, CUADRADO).
+  - [x] Intento de registrar movimiento o re-cerrar turno cerrado (rechazo HTTP 400). Todos los 12 tests E2E aprobados.
