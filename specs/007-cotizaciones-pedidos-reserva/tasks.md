@@ -18,9 +18,9 @@
 
 ## Phase 2: Despliegue en Coolify y Verificación en Vivo (Principio IX)
 
-- [ ] **T007** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
-- [ ] **T008** Disparar despliegue en Coolify y confirmar estado saludable (`running:healthy`).
-- [ ] **T009** Crear y ejecutar script E2E en vivo (`scratch/test_live_007.js`):
+- [x] **T007** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
+- [x] **T008** Disparar despliegue en Coolify y confirmar estado saludable (`running:healthy`).
+- [x] **T009** Crear y ejecutar script E2E en vivo (`scratch/test_live_007.js`):
   - Emisión de cotización comercial con 15 días de validez.
   - Consulta de detalle de cotización con cálculo de vigencia.
   - Conversión exitosa de cotización a venta POS y verificación de stock restado en Kardex.
