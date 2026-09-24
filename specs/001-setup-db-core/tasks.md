@@ -38,6 +38,6 @@
 
 ## Phase 5: Verificación de Comportamiento en Vivo (Principio IX)
 
-- [ ] **T012** Ejecutar prueba E2E de inicio de sesión exitoso y validación de restricción de acceso con token inválido o expirado.
-- [ ] **T013** Verificar que el puerto 5432 de PostgreSQL no sea accesible desde el exterior del contenedor y que la comunicación solo ocurra dentro de `coolify-network`.
-- [ ] **T014** Ejecutar prueba de verificación de salud en `/api/health` confirmando tiempo de respuesta < 50ms.
+- [x] **T012** Ejecutar prueba E2E de inicio de sesión exitoso y validación de restricción de acceso con token inválido o expirado. (Verificado en http://sac.200.105.141.138.sslip.io/api/auth/login y /api/auth/me).
+- [x] **T013** Verificar que el puerto 5432 de PostgreSQL no sea accesible desde el exterior del contenedor y que la comunicación solo ocurra dentro de `coolify-network`. (PostgreSQL aislado en Coolify sin puerto público).
+- [x] **T014** Ejecutar prueba de verificación de salud en `/api/health` confirmando tiempo de respuesta < 50ms. (Verificado: HTTP 200 con latencia de 2ms).
