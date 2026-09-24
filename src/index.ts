@@ -12,6 +12,8 @@ import { ventasRouter } from './routes/ventas.js';
 import { facturacionRouter } from './routes/facturacion.js';
 import { cajasRouter } from './routes/cajas.js';
 import { cotizacionesRouter } from './routes/cotizaciones.js';
+import { proveedoresRouter } from './routes/proveedores.js';
+import { comprasRouter } from './routes/compras.js';
 import { getPortalHtml } from './portal.js';
 
 dotenv.config();
@@ -48,7 +50,9 @@ app.get('/api', (_req, res) => {
       ventas: 'GET /api/ventas, POST /api/ventas, GET /api/ventas/:id, POST /api/ventas/:id/anular',
       facturas: 'GET /api/facturas, POST /api/facturas, GET /api/facturas/:id, GET /api/facturas/venta/:id_venta, POST /api/facturas/:id/anular',
       cajas: 'GET /api/cajas, POST /api/cajas, POST /api/cajas/turnos/abrir, GET /api/cajas/turnos/activo, POST /api/cajas/turnos/:id/movimientos, POST /api/cajas/turnos/:id/cerrar, GET /api/cajas/turnos',
-      cotizaciones: 'GET /api/cotizaciones, POST /api/cotizaciones, GET /api/cotizaciones/:id, POST /api/cotizaciones/:id/convertir-a-venta, POST /api/cotizaciones/:id/rechazar'
+      cotizaciones: 'GET /api/cotizaciones, POST /api/cotizaciones, GET /api/cotizaciones/:id, POST /api/cotizaciones/:id/convertir-a-venta, POST /api/cotizaciones/:id/rechazar',
+      proveedores: 'GET /api/proveedores, POST /api/proveedores, GET /api/proveedores/:id, PUT /api/proveedores/:id',
+      compras: 'GET /api/compras, POST /api/compras, POST /api/compras/importacion-dui, GET /api/compras/alertas-reprecio, GET /api/compras/:id'
     }
   });
 });
@@ -64,6 +68,8 @@ app.use('/api/ventas', ventasRouter);
 app.use('/api/facturas', facturacionRouter);
 app.use('/api/cajas', cajasRouter);
 app.use('/api/cotizaciones', cotizacionesRouter);
+app.use('/api/proveedores', proveedoresRouter);
+app.use('/api/compras', comprasRouter);
 
 // Manejador de rutas no encontradas
 app.use((_req, res) => {

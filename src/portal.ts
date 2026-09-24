@@ -290,6 +290,12 @@ export function getPortalHtml(): string {
           <div class="module-name">Cotizaciones & Pedidos</div>
           <div class="module-desc">Presupuestos con vigencia temporal, márgenes y conversión directa a Venta POS.</div>
         </div>
+
+        <div class="module-item">
+          <span class="module-badge" style="background: rgba(236, 72, 153, 0.15); color: #f472b6;">008-COMPRAS & DUI</span>
+          <div class="module-name">Compras & Liquidación DUI</div>
+          <div class="module-desc">Proveedores, prorrateo de pólizas aduaneras, costeo ponderado y alertas de reprecio.</div>
+        </div>
       </div>
 
       <div class="actions">
