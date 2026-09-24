@@ -21,14 +21,15 @@
 
 ## Phase 2: Despliegue en Coolify y Verificación en Vivo (Principio IX)
 
-- [ ] **T006** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
-- [ ] **T007** Disparar despliegue en Coolify y confirmar estado saludable.
-- [ ] **T008** Crear y ejecutar script E2E en vivo (`scratch/test_live_004.js`):
-  - Venta de mostrador (Contado) con decremento automático en Kardex.
-  - Venta a crédito exitosa (dentro de límite de crédito).
-  - Rechazo de venta a crédito por exceder límite de crédito.
-  - Rechazo de venta a crédito por cliente con bloqueo por mora.
-  - Rechazo de venta por falta de stock (camino infeliz).
-  - Rechazo de venta por falta de número de serie obligatorio (camino infeliz).
-  - Consulta de detalle de venta.
-  - Anulación de venta y comprobación de reposición de stock en Kardex.
+- [x] **T006** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
+- [x] **T007** Disparar despliegue en Coolify y confirmar estado saludable (`running:healthy`).
+- [x] **T008** Crear y ejecutar script E2E en vivo (`scratch/test_live_004.js`):
+  - [x] Venta de mostrador (Contado) con decremento automático en Kardex (reducido exactamente a 17).
+  - [x] Venta a crédito exitosa (dentro de límite de crédito, acumulando deuda a 3,500 Bs).
+  - [x] Rechazo de venta a crédito por exceder límite de crédito (solicitado 25,000 Bs vs 11,500 Bs disponibles).
+  - [x] Rechazo de venta a crédito por cliente con bloqueo por mora activo.
+  - [x] Rechazo de venta por falta de stock (solicitado 9,999 vs 7 disponibles).
+  - [x] Rechazo de venta por falta de número de serie obligatorio en producto serializado.
+  - [x] Venta de producto con número de serie registrado exitosamente.
+  - [x] Consulta de detalle de venta (`GET /api/ventas/:id`) con cabecera y lista de ítems.
+  - [x] Anulación de venta (`POST /api/ventas/:id/anular`) y restitución exacta del stock en Kardex (+3 unidades a 10).
