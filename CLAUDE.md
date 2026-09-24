@@ -2,12 +2,12 @@
 
 > Sistema en Línea de Gestión Administrativo Comercial integrado a Contabilidad (SAC) para **DIREMOR S.R.L.**
 
-## Active feature: [002-productos-kardex]
+## Active feature: [003-clientes-credito-mora]
 
-Plan técnico: [specs/002-productos-kardex/plan.md](specs/002-productos-kardex/plan.md)
+Plan técnico: [specs/003-clientes-credito-mora/plan.md](specs/003-clientes-credito-mora/plan.md)
 (spec, research, data-model, contracts y quickstart en la misma carpeta).
 
-Catálogo de productos, existencias consolidadas multialmacén y transaccionalidad de kardex físico-valorado con trazabilidad.
+Padrón maestro de clientes, gestión de límites de crédito, evaluación crediticia y control de bloqueo por mora.
 
 ## Stack
 
