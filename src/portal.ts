@@ -314,6 +314,12 @@ export function getPortalHtml(): string {
           <div class="module-name">CxC, CxP & Amortizaciones</div>
           <div class="module-desc">Control de cartera, recibos de cobranza, comprobantes de egreso, mora y antigüedad de saldos.</div>
         </div>
+
+        <div class="module-item">
+          <span class="module-badge" style="background: rgba(99, 102, 241, 0.2); color: #818cf8;">012-CONTABILIDAD GENERAL</span>
+          <div class="module-name">Asientos, Mayores & Libros Fiscales</div>
+          <div class="module-desc">Plan de cuentas estándar boliviano, partida doble estricta, balance sumas y saldos, compras y ventas IVA.</div>
+        </div>
       </div>
 
       <div class="actions">
