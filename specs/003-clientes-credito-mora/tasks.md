@@ -17,6 +17,6 @@
 
 ## Phase 2: Despliegue en Coolify y Verificación en Vivo (Principio IX)
 
-- [ ] **T006** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
-- [ ] **T007** Disparar despliegue en Coolify y confirmar estado `running:healthy`.
-- [ ] **T008** Ejecutar suite de pruebas E2E en vivo (crear cliente, consultar genérico, evaluar crédito normal, activar bloqueo por mora y comprobar rechazo de crédito).
+- [x] **T006** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
+- [x] **T007** Disparar despliegue en Coolify y confirmar estado `running:healthy`.
+- [x] **T008** Ejecutar suite de pruebas E2E en vivo (crear cliente, consultar genérico, evaluar crédito normal, activar bloqueo por mora y comprobar rechazo de crédito). Todos los 11 tests E2E aprobados.
