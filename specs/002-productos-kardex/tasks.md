@@ -29,6 +29,6 @@
 
 ## Phase 4: Despliegue en Coolify y Verificación en Vivo (Principio IX)
 
-- [ ] **T008** Compilar código local, sincronizar cambios y subir a GitHub (`git push origin main`).
-- [ ] **T009** Disparar despliegue en Coolify y confirmar que el contenedor se actualice a estado `running:healthy`.
-- [ ] **T010** Ejecutar suite de pruebas E2E en vivo (crear categoría, registrar producto, realizar movimiento en kardex, consultar stock, verificar alertas y rechazo de salida con stock insuficiente).
+- [x] **T008** Compilar código local, sincronizar cambios y subir a GitHub (`git push origin main`). (Commit `806b0f3`).
+- [x] **T009** Disparar despliegue en Coolify y confirmar que el contenedor se actualice a estado `running:healthy`. (Deploy `dwaamli6mgylexqecp3gz2mc` en `http://sac.200.105.141.138.sslip.io`).
+- [x] **T010** Ejecutar suite de pruebas E2E en vivo (crear categoría, registrar producto, realizar movimiento en kardex, consultar stock, verificar alertas y rechazo de salida con stock insuficiente). (Todos los 11 tests E2E verdes en producción).
