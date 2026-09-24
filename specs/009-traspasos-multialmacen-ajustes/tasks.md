@@ -18,13 +18,13 @@
 
 ## Phase 2: Despliegue en Coolify y Verificación en Vivo (Principio IX)
 
-- [ ] **T007** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
-- [ ] **T008** Disparar despliegue en Coolify y confirmar estado saludable (`healthy`).
-- [ ] **T009** Crear y ejecutar script E2E en vivo (`scratch/test_live_009.js`):
+- [x] **T007** Sincronizar cambios en git y enviar a GitHub (`git push origin main`).
+- [x] **T008** Disparar despliegue en Coolify y confirmar estado saludable (`healthy`).
+- [x] **T009** Crear y ejecutar script E2E en vivo (`scratch/test_live_009.js`):
   - Creación de producto y abastecimiento en almacén origen.
   - Despacho de traspaso hacia almacén secundario y verificación de estado `EN_TRANSITO`.
   - Confirmación de recepción física en almacén destino y verificación de stock en ambos almacenes.
   - Validación de caminos infelices (re-recepción 409, almacenes idénticos 400, sobregiro 400).
   - Registro de ajuste positivo (sobrante) y verificación de incremento en Kardex.
   - Registro de ajuste negativo (merma/rotura) y verificación de descuento en Kardex.
-- [ ] **T010** Ejecutar suite completa de no-regresión (003, 005, 006, 007, 008).
+- [x] **T010** Ejecutar suite completa de no-regresión (003, 005, 006, 007, 008).
