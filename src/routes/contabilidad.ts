@@ -502,7 +502,7 @@ contabilidadRouter.get('/libros-fiscales/ventas-iva', async (req: AuthenticatedR
               f.estado_sin,
               v.id_venta,
               v.total_neto AS importe_total,
-              v.descuento_total,
+              v.descuento,
               c.nit_ci AS nit_cliente,
               c.razon_social AS razon_social_cliente,
               ROUND((v.total_neto * 0.13), 2) AS debito_fiscal_iva,
@@ -550,14 +550,15 @@ contabilidadRouter.get('/libros-fiscales/compras-iva', async (req: Authenticated
       `SELECT c.id_compra,
               c.tipo_compra,
               c.numero_factura_proveedor,
-              c.numero_dui,
+              dui.numero_dui,
               c.fecha_compra,
-              c.total_neto_bob AS importe_total,
+              c.monto_total_neto AS importe_total,
               p.nit_ci AS nit_proveedor,
               p.razon_social AS razon_social_proveedor,
-              ROUND((c.total_neto_bob * 0.13), 2) AS credito_fiscal_iva
+              ROUND((c.monto_total_neto * 0.13), 2) AS credito_fiscal_iva
        FROM compras_cabecera c
        JOIN proveedores p ON c.id_proveedor = p.id_proveedor
+       LEFT JOIN compras_importacion_dui dui ON c.id_compra = dui.id_compra
        WHERE date_trunc('month', c.fecha_compra) = date_trunc('month', $1::date)
        ORDER BY c.fecha_compra ASC, c.id_compra ASC`,
       [fechaFiltro]
