@@ -35,16 +35,17 @@ export function authenticateToken(req: AuthenticatedRequest, res: Response, next
   });
 }
 
-export function requireRole(allowedRoles: string[]) {
+export function requireRole(...allowedRoles: (string | string[])[]) {
+  const flatRoles = allowedRoles.flat();
   return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
       res.status(401).json({ error: 'No autenticado.' });
       return;
     }
 
-    if (!allowedRoles.includes(req.user.rol) && req.user.rol !== 'ADMIN') {
+    if (!flatRoles.includes(req.user.rol) && req.user.rol !== 'ADMIN') {
       res.status(403).json({ 
-        error: `Acceso denegado: Se requiere rol [${allowedRoles.join(', ')}]. Tu rol actual es [${req.user.rol}].` 
+        error: `Acceso denegado: Se requiere rol [${flatRoles.join(', ')}]. Tu rol actual es [${req.user.rol}].` 
       });
       return;
     }

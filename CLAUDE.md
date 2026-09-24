@@ -2,12 +2,12 @@
 
 > Sistema en Línea de Gestión Administrativo Comercial integrado a Contabilidad (SAC) para **DIREMOR S.R.L.**
 
-## Active feature: [001-setup-db-core]
+## Active feature: [002-productos-kardex]
 
-Plan técnico: [specs/001-setup-db-core/plan.md](specs/001-setup-db-core/plan.md)
+Plan técnico: [specs/002-productos-kardex/plan.md](specs/002-productos-kardex/plan.md)
 (spec, research, data-model, contracts y quickstart en la misma carpeta).
 
-Inicialización de la arquitectura base, persistencia en PostgreSQL 16+, esquema relacional transaccional y configuración de despliegue en Coolify PaaS.
+Catálogo de productos, existencias consolidadas multialmacén y transaccionalidad de kardex físico-valorado con trazabilidad.
 
 ## Stack
 

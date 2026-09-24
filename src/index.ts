@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import { healthRouter } from './routes/health.js';
 import { authRouter } from './routes/auth.js';
 import { sucursalesRouter } from './routes/sucursales.js';
+import { productosRouter } from './routes/productos.js';
+import { kardexRouter } from './routes/kardex.js';
 
 dotenv.config();
 
@@ -20,6 +22,8 @@ app.use(express.json());
 app.use('/api/health', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/sucursales', sucursalesRouter);
+app.use('/api/productos', productosRouter);
+app.use('/api/kardex', kardexRouter);
 
 // Manejador de rutas no encontradas
 app.use((_req, res) => {
