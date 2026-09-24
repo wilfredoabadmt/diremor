@@ -302,6 +302,12 @@ export function getPortalHtml(): string {
           <div class="module-name">Traspasos & Ajustes</div>
           <div class="module-desc">Control multialmacén en tránsito, recepción física, mermas y auditoría de inventario.</div>
         </div>
+
+        <div class="module-item">
+          <span class="module-badge" style="background: rgba(234, 88, 12, 0.15); color: #fb923c;">010-PRODUCCIÓN & BOM</span>
+          <div class="module-name">Costos & Producción Fabril</div>
+          <div class="module-desc">Recetas BOM, órdenes de trabajo, absorción de MP, MOD, CIF e ingreso valorado.</div>
+        </div>
       </div>
 
       <div class="actions">
