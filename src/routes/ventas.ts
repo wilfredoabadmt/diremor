@@ -132,9 +132,9 @@ ventasRouter.post('/', requireRole('ADMIN', 'VENTAS', 'SUPERVISOR'), async (req:
       const subtotal = Math.round(cant * precioUnit * 100) / 100;
       totalBruto += subtotal;
 
-      // Verificar stock disponible en almacén
+      // Verificar stock disponible en almacén con bloqueo pesimista
       const lastKardex = await client.query(
-        'SELECT saldo_cantidad, saldo_valorado, costo_unitario FROM kardex_movimientos WHERE id_almacen = $1 AND codigo_producto = $2 ORDER BY id_kardex DESC LIMIT 1',
+        'SELECT saldo_cantidad, saldo_valorado, costo_unitario FROM kardex_movimientos WHERE id_almacen = $1 AND codigo_producto = $2 ORDER BY id_kardex DESC LIMIT 1 FOR UPDATE',
         [idAlmacenItem, prod.codigo_producto]
       );
 
@@ -243,6 +243,13 @@ ventasRouter.post('/', requireRole('ADMIN', 'VENTAS', 'SUPERVISOR'), async (req:
       const costoUnitarioKardex = kardexLock.rows.length > 0 ? Number(kardexLock.rows[0].costo_unitario) : item.precio_costo;
 
       const nuevoSaldoCantidad = saldoAnteriorCantidad - item.cantidad;
+      if (nuevoSaldoCantidad < 0) {
+        await client.query('ROLLBACK');
+        res.status(400).json({
+          error: `Stock insuficiente en almacén para ${item.codigo_producto}. Saldo disponible: ${saldoAnteriorCantidad}, Solicitado: ${item.cantidad}`
+        });
+        return;
+      }
       const nuevoSaldoValorado = Math.max(0, saldoAnteriorValorado - (item.cantidad * costoUnitarioKardex));
 
       // Inserción en kardex_movimientos
