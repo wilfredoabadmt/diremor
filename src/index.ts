@@ -14,6 +14,8 @@ import { cajasRouter } from './routes/cajas.js';
 import { cotizacionesRouter } from './routes/cotizaciones.js';
 import { proveedoresRouter } from './routes/proveedores.js';
 import { comprasRouter } from './routes/compras.js';
+import { traspasosRouter } from './routes/traspasos.js';
+import { ajustesRouter } from './routes/ajustes.js';
 import { getPortalHtml } from './portal.js';
 
 dotenv.config();
@@ -52,7 +54,9 @@ app.get('/api', (_req, res) => {
       cajas: 'GET /api/cajas, POST /api/cajas, POST /api/cajas/turnos/abrir, GET /api/cajas/turnos/activo, POST /api/cajas/turnos/:id/movimientos, POST /api/cajas/turnos/:id/cerrar, GET /api/cajas/turnos',
       cotizaciones: 'GET /api/cotizaciones, POST /api/cotizaciones, GET /api/cotizaciones/:id, POST /api/cotizaciones/:id/convertir-a-venta, POST /api/cotizaciones/:id/rechazar',
       proveedores: 'GET /api/proveedores, POST /api/proveedores, GET /api/proveedores/:id, PUT /api/proveedores/:id',
-      compras: 'GET /api/compras, POST /api/compras, POST /api/compras/importacion-dui, GET /api/compras/alertas-reprecio, GET /api/compras/:id'
+      compras: 'GET /api/compras, POST /api/compras, POST /api/compras/importacion-dui, GET /api/compras/alertas-reprecio, GET /api/compras/:id',
+      traspasos: 'GET /api/traspasos, POST /api/traspasos, GET /api/traspasos/:id, POST /api/traspasos/:id/recibir, POST /api/traspasos/:id/rechazar',
+      ajustes: 'GET /api/ajustes, POST /api/ajustes, GET /api/ajustes/:id'
     }
   });
 });
@@ -70,6 +74,8 @@ app.use('/api/cajas', cajasRouter);
 app.use('/api/cotizaciones', cotizacionesRouter);
 app.use('/api/proveedores', proveedoresRouter);
 app.use('/api/compras', comprasRouter);
+app.use('/api/traspasos', traspasosRouter);
+app.use('/api/ajustes', ajustesRouter);
 
 // Manejador de rutas no encontradas
 app.use((_req, res) => {
