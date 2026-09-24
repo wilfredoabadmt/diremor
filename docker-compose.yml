@@ -15,10 +15,12 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-DiremorSecure2026_PostgresPass}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/migrations:/docker-entrypoint-initdb.d:ro
+      - ./database/migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql:ro
+      - ./database/migrations/002_kardex_trigger.sql:/docker-entrypoint-initdb.d/002_kardex_trigger.sql:ro
+      - ./database/seeds/001_seed_core.sql:/docker-entrypoint-initdb.d/003_seed_core.sql:ro
     networks:
       - coolify-network
-    # El puerto 5432 NO se mapea al host para evitar exposición a internet pública
+    # El puerto 5432 NO se expone al exterior (red privada segura)
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sac_admin} -d ${POSTGRES_DB:-sac_diremor}"]
       interval: 10s
@@ -48,7 +50,7 @@ services:
     # Enrutamiento mediante Traefik Proxy nativo de Coolify
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.sac-api.rule=Host(`${APP_DOMAIN:-sac.diremor.com}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.sac-api.rule=Host(`${APP_DOMAIN:-sac.diremor.com}`)"
       - "traefik.http.routers.sac-api.entrypoints=websecure"
       - "traefik.http.routers.sac-api.tls.certresolver=letsencrypt"
       - "traefik.http.services.sac-api.loadbalancer.server.port=3000"
@@ -65,4 +67,5 @@ volumes:
 
 networks:
   coolify-network:
-    external: true
+    name: coolify-network
+    driver: bridge
