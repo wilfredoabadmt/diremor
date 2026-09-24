@@ -1127,10 +1127,35 @@ export function getPortalHtml(): string {
       }
     }
 
+    // Auto-login silencioso para experiencia fluida
+    async function asegurarAutenticacion() {
+      if (!token) {
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ correo: 'admin@diremor.bo', password_hash: 'Admin123*!' })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            token = data.token;
+            currentUser = data.usuario;
+            localStorage.setItem('diremor_token', token);
+            localStorage.setItem('diremor_user', JSON.stringify(currentUser));
+            actualizarInterfazUsuario();
+          }
+        } catch (e) {
+          console.warn('Auto-login error:', e);
+        }
+      }
+    }
+
     // Clientes
     async function cargarClientes() {
+      await asegurarAutenticacion();
       try {
-        const res = await fetch('/api/clientes');
+        const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+        const res = await fetch('/api/clientes', { headers });
         if (res.ok) {
           const data = await res.json();
           const select = document.getElementById('pos-cliente');
@@ -1148,8 +1173,10 @@ export function getPortalHtml(): string {
     }
 
     async function cargarClienteGenerico() {
+      await asegurarAutenticacion();
       try {
-        const res = await fetch('/api/clientes/generico');
+        const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+        const res = await fetch('/api/clientes/generico', { headers });
         if (res.ok) {
           const c = await res.json();
           const select = document.getElementById('pos-cliente');
@@ -1170,8 +1197,10 @@ export function getPortalHtml(): string {
 
     // Productos
     async function cargarProductos() {
+      await asegurarAutenticacion();
       try {
-        const res = await fetch('/api/productos');
+        const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+        const res = await fetch('/api/productos', { headers });
         if (res.ok) {
           catalogo = await res.json();
           renderTablaProductos(catalogo);
@@ -1381,8 +1410,10 @@ export function getPortalHtml(): string {
 
     // Cajas & Turnos
     async function verificarTurnoCaja() {
+      await asegurarAutenticacion();
       try {
-        const res = await fetch('/api/cajas/turnos/activo?id_caja=1');
+        const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+        const res = await fetch('/api/cajas/turnos/activo?id_caja=1', { headers });
         const badge = document.getElementById('caja-estado-badge');
         const info = document.getElementById('caja-info-container');
         const formAbrir = document.getElementById('form-apertura-caja');
