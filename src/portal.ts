@@ -278,6 +278,12 @@ export function getPortalHtml(): string {
           <div class="module-name">Facturación en Línea (SIN)</div>
           <div class="module-desc">RND 102100000011, CUF algorítmico, CUFD, códigos QR tributarios y anulación.</div>
         </div>
+
+        <div class="module-item">
+          <span class="module-badge" style="background: rgba(245, 158, 11, 0.15); color: #fcd34d;">006-CAJAS</span>
+          <div class="module-name">Control de Cajas & Turnos</div>
+          <div class="module-desc">Arqueos ciegos de corte, control de sobrantes/faltantes y movimientos de gaveta.</div>
+        </div>
       </div>
 
       <div class="actions">
