@@ -19,6 +19,8 @@ import { ajustesRouter } from './routes/ajustes.js';
 import { produccionRouter } from './routes/produccion.js';
 import { tesoreriaRouter } from './routes/tesoreria.js';
 import { contabilidadRouter } from './routes/contabilidad.js';
+import { administracionRouter } from './routes/administracion.js';
+import { impresionRouter } from './routes/impresion.js';
 import { getPortalHtml } from './portal.js';
 
 dotenv.config();
@@ -62,7 +64,9 @@ app.get('/api', (_req, res) => {
       ajustes: 'GET /api/ajustes, POST /api/ajustes, GET /api/ajustes/:id',
       produccion: 'GET /api/produccion/recetas, POST /api/produccion/recetas, GET /api/produccion/ordenes, POST /api/produccion/ordenes, POST /api/produccion/ordenes/:id/consumir-mp, POST /api/produccion/ordenes/:id/imputar-costos, POST /api/produccion/ordenes/:id/finalizar',
       tesoreria: 'GET /api/tesoreria/cxc, POST /api/tesoreria/cxc, POST /api/tesoreria/cxc/cobros, GET /api/tesoreria/cxc/antiguedad-saldos, GET /api/tesoreria/cxp, POST /api/tesoreria/cxp, POST /api/tesoreria/cxp/pagos',
-      contabilidad: 'GET /api/contabilidad/cuentas, POST /api/contabilidad/cuentas, POST /api/contabilidad/asientos, GET /api/contabilidad/asientos, GET /api/contabilidad/libro-diario, GET /api/contabilidad/libro-mayor, GET /api/contabilidad/balance-sumas-saldos, GET /api/contabilidad/libros-fiscales/ventas-iva, GET /api/contabilidad/libros-fiscales/compras-iva'
+      contabilidad: 'GET /api/contabilidad/cuentas, POST /api/contabilidad/cuentas, POST /api/contabilidad/asientos, GET /api/contabilidad/asientos, GET /api/contabilidad/libro-diario, GET /api/contabilidad/libro-mayor, GET /api/contabilidad/balance-sumas-saldos, GET /api/contabilidad/libros-fiscales/ventas-iva, GET /api/contabilidad/libros-fiscales/compras-iva',
+      administracion: 'GET /api/administracion/periodos, GET /api/administracion/periodos/verificar, POST /api/administracion/periodos/cerrar, POST /api/administracion/periodos/reabrir, GET /api/administracion/sucursales/:id, PUT /api/administracion/sucursales/:id',
+      impresion: 'GET /api/impresion/comprobante/:id, GET /api/impresion/factura/:id, GET /api/impresion/recibo-cobro/:id, GET /api/impresion/proforma/:id'
     }
   });
 });
@@ -85,6 +89,8 @@ app.use('/api/ajustes', ajustesRouter);
 app.use('/api/produccion', produccionRouter);
 app.use('/api/tesoreria', tesoreriaRouter);
 app.use('/api/contabilidad', contabilidadRouter);
+app.use('/api/administracion', administracionRouter);
+app.use('/api/impresion', impresionRouter);
 
 // Manejador de rutas no encontradas
 app.use((_req, res) => {

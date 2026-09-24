@@ -320,6 +320,12 @@ export function getPortalHtml(): string {
           <div class="module-name">Asientos, Mayores & Libros Fiscales</div>
           <div class="module-desc">Plan de cuentas estándar boliviano, partida doble estricta, balance sumas y saldos, compras y ventas IVA.</div>
         </div>
+
+        <div class="module-item">
+          <span class="module-badge" style="background: rgba(244, 63, 94, 0.2); color: #fb7185;">013-ADMIN & IMPRESIÓN</span>
+          <div class="module-name">Cierre de Períodos & Media Carta</div>
+          <div class="module-desc">Bloqueo de meses contables, metadatos de sucursales e impresión HTML/print ready en Media Carta (Facturas, Asientos, Recibos).</div>
+        </div>
       </div>
 
       <div class="actions">
