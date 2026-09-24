@@ -215,9 +215,77 @@ tesoreriaRouter.get('/cxc', async (req: AuthenticatedRequest, res: Response) => 
 });
 
 // =====================================================================
+// GET /api/tesoreria/cxc/antiguedad-saldos - Reporte de Antigüedad de Cartera
+// =====================================================================
+tesoreriaRouter.get('/cxc/antiguedad-saldos', async (_req: AuthenticatedRequest, res: Response) => {
+  try {
+    const result = await query(`
+      SELECT cli.id_cliente,
+             cli.razon_social,
+             cli.nit_ci,
+             cli.telefono,
+             cli.bloqueo_mora,
+             COALESCE(SUM(CASE WHEN c.fecha_vencimiento >= CURRENT_DATE THEN c.monto_saldo ELSE 0 END), 0.00) AS no_vencido,
+             COALESCE(SUM(CASE WHEN CURRENT_DATE - c.fecha_vencimiento BETWEEN 1 AND 30 THEN c.monto_saldo ELSE 0 END), 0.00) AS de_1_a_30_dias,
+             COALESCE(SUM(CASE WHEN CURRENT_DATE - c.fecha_vencimiento BETWEEN 31 AND 60 THEN c.monto_saldo ELSE 0 END), 0.00) AS de_31_a_60_dias,
+             COALESCE(SUM(CASE WHEN CURRENT_DATE - c.fecha_vencimiento BETWEEN 61 AND 90 THEN c.monto_saldo ELSE 0 END), 0.00) AS de_61_a_90_dias,
+             COALESCE(SUM(CASE WHEN CURRENT_DATE - c.fecha_vencimiento > 90 THEN c.monto_saldo ELSE 0 END), 0.00) AS mas_de_90_dias,
+             COALESCE(SUM(c.monto_saldo), 0.00) AS total_saldo_deudor
+      FROM clientes cli
+      JOIN cxc_cuentas c ON cli.id_cliente = c.id_cliente
+      WHERE c.monto_saldo > 0 AND c.estado != 'PAGADO'
+      GROUP BY cli.id_cliente, cli.razon_social, cli.nit_ci, cli.telefono, cli.bloqueo_mora
+      ORDER BY total_saldo_deudor DESC
+    `);
+
+    return res.status(200).json({
+      total_clientes_con_deuda: result.rows.length,
+      reporte: result.rows
+    });
+  } catch (error: any) {
+    console.error('[Error en GET /api/tesoreria/cxc/antiguedad-saldos]:', error);
+    return res.status(500).json({ error: 'Error interno al generar reporte de antigüedad de saldos.' });
+  }
+});
+
+// =====================================================================
+// GET /api/tesoreria/cxc/estado-cuenta/:id_cliente - Extracto de Cuenta Cliente
+// =====================================================================
+tesoreriaRouter.get('/cxc/estado-cuenta/:id_cliente(\\d+)', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id_cliente } = req.params;
+
+    const cliRes = await query(`SELECT * FROM clientes WHERE id_cliente = $1`, [id_cliente]);
+    if (cliRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Cliente no encontrado.' });
+    }
+
+    const cxcList = await query(
+      `SELECT c.*,
+              COALESCE((SELECT json_agg(cb ORDER BY cb.id_cobro ASC) FROM cxc_cobros cb WHERE cb.id_cxc = c.id_cxc), '[]'::json) AS cobros_aplicados
+       FROM cxc_cuentas c
+       WHERE c.id_cliente = $1
+       ORDER BY c.id_cxc ASC`,
+      [id_cliente]
+    );
+
+    const saldoTotal = cxcList.rows.reduce((acc, row) => acc + parseFloat(row.monto_saldo), 0);
+
+    return res.status(200).json({
+      cliente: cliRes.rows[0],
+      total_saldo_deudor: parseFloat(saldoTotal.toFixed(2)),
+      cuentas: cxcList.rows
+    });
+  } catch (error: any) {
+    console.error('[Error en GET /api/tesoreria/cxc/estado-cuenta/:id_cliente]:', error);
+    return res.status(500).json({ error: 'Error interno al consultar extracto de cliente.' });
+  }
+});
+
+// =====================================================================
 // GET /api/tesoreria/cxc/:id - Detalle de Cuenta por Cobrar y Cobros
 // =====================================================================
-tesoreriaRouter.get('/cxc/:id', async (req: AuthenticatedRequest, res: Response) => {
+tesoreriaRouter.get('/cxc/:id(\\d+)', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -496,9 +564,43 @@ tesoreriaRouter.get('/cxp', async (req: AuthenticatedRequest, res: Response) => 
 });
 
 // =====================================================================
+// GET /api/tesoreria/cxp/estado-cuenta/:id_proveedor - Extracto de Proveedor
+// =====================================================================
+tesoreriaRouter.get('/cxp/estado-cuenta/:id_proveedor(\\d+)', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id_proveedor } = req.params;
+
+    const provRes = await query(`SELECT * FROM proveedores WHERE id_proveedor = $1`, [id_proveedor]);
+    if (provRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Proveedor no encontrado.' });
+    }
+
+    const cxpList = await query(
+      `SELECT c.*,
+              COALESCE((SELECT json_agg(pg ORDER BY pg.id_pago ASC) FROM cxp_pagos pg WHERE pg.id_cxp = c.id_cxp), '[]'::json) AS pagos_aplicados
+       FROM cxp_cuentas c
+       WHERE c.id_proveedor = $1
+       ORDER BY c.id_cxp ASC`,
+      [id_proveedor]
+    );
+
+    const saldoTotal = cxpList.rows.reduce((acc, row) => acc + parseFloat(row.monto_saldo), 0);
+
+    return res.status(200).json({
+      proveedor: provRes.rows[0],
+      total_saldo_pendiente: parseFloat(saldoTotal.toFixed(2)),
+      obligaciones: cxpList.rows
+    });
+  } catch (error: any) {
+    console.error('[Error en GET /api/tesoreria/cxp/estado-cuenta/:id_proveedor]:', error);
+    return res.status(500).json({ error: 'Error interno al consultar extracto de proveedor.' });
+  }
+});
+
+// =====================================================================
 // GET /api/tesoreria/cxp/:id - Detalle de Cuenta por Pagar y Pagos
 // =====================================================================
-tesoreriaRouter.get('/cxp/:id', async (req: AuthenticatedRequest, res: Response) => {
+tesoreriaRouter.get('/cxp/:id(\\d+)', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -644,104 +746,3 @@ tesoreriaRouter.post('/cxp/pagos', requireRole('ADMIN', 'SUPERVISOR', 'ALMACENER
   }
 });
 
-// =====================================================================
-// GET /api/tesoreria/cxc/antiguedad-saldos - Reporte de Antigüedad de Cartera
-// =====================================================================
-tesoreriaRouter.get('/cxc/antiguedad-saldos', async (_req: AuthenticatedRequest, res: Response) => {
-  try {
-    const result = await query(`
-      SELECT cli.id_cliente,
-             cli.razon_social,
-             cli.nit_ci,
-             cli.telefono,
-             cli.bloqueo_mora,
-             COALESCE(SUM(CASE WHEN c.fecha_vencimiento >= CURRENT_DATE THEN c.monto_saldo ELSE 0 END), 0.00) AS no_vencido,
-             COALESCE(SUM(CASE WHEN CURRENT_DATE - c.fecha_vencimiento BETWEEN 1 AND 30 THEN c.monto_saldo ELSE 0 END), 0.00) AS de_1_a_30_dias,
-             COALESCE(SUM(CASE WHEN CURRENT_DATE - c.fecha_vencimiento BETWEEN 31 AND 60 THEN c.monto_saldo ELSE 0 END), 0.00) AS de_31_a_60_dias,
-             COALESCE(SUM(CASE WHEN CURRENT_DATE - c.fecha_vencimiento BETWEEN 61 AND 90 THEN c.monto_saldo ELSE 0 END), 0.00) AS de_61_a_90_dias,
-             COALESCE(SUM(CASE WHEN CURRENT_DATE - c.fecha_vencimiento > 90 THEN c.monto_saldo ELSE 0 END), 0.00) AS mas_de_90_dias,
-             COALESCE(SUM(c.monto_saldo), 0.00) AS total_saldo_deudor
-      FROM clientes cli
-      JOIN cxc_cuentas c ON cli.id_cliente = c.id_cliente
-      WHERE c.monto_saldo > 0 AND c.estado != 'PAGADO'
-      GROUP BY cli.id_cliente, cli.razon_social, cli.nit_ci, cli.telefono, cli.bloqueo_mora
-      ORDER BY total_saldo_deudor DESC
-    `);
-
-    return res.status(200).json({
-      total_clientes_con_deuda: result.rows.length,
-      reporte: result.rows
-    });
-  } catch (error: any) {
-    console.error('[Error en GET /api/tesoreria/cxc/antiguedad-saldos]:', error);
-    return res.status(500).json({ error: 'Error interno al generar reporte de antigüedad de saldos.' });
-  }
-});
-
-// =====================================================================
-// GET /api/tesoreria/cxc/estado-cuenta/:id_cliente - Extracto de Cuenta Cliente
-// =====================================================================
-tesoreriaRouter.get('/cxc/estado-cuenta/:id_cliente', async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const { id_cliente } = req.params;
-
-    const cliRes = await query(`SELECT * FROM clientes WHERE id_cliente = $1`, [id_cliente]);
-    if (cliRes.rows.length === 0) {
-      return res.status(404).json({ error: 'Cliente no encontrado.' });
-    }
-
-    const cxcList = await query(
-      `SELECT c.*,
-              COALESCE((SELECT json_agg(cb ORDER BY cb.id_cobro ASC) FROM cxc_cobros cb WHERE cb.id_cxc = c.id_cxc), '[]'::json) AS cobros_aplicados
-       FROM cxc_cuentas c
-       WHERE c.id_cliente = $1
-       ORDER BY c.id_cxc ASC`,
-      [id_cliente]
-    );
-
-    const saldoTotal = cxcList.rows.reduce((acc, row) => acc + parseFloat(row.monto_saldo), 0);
-
-    return res.status(200).json({
-      cliente: cliRes.rows[0],
-      total_saldo_deudor: parseFloat(saldoTotal.toFixed(2)),
-      cuentas: cxcList.rows
-    });
-  } catch (error: any) {
-    console.error('[Error en GET /api/tesoreria/cxc/estado-cuenta/:id_cliente]:', error);
-    return res.status(500).json({ error: 'Error interno al consultar extracto de cliente.' });
-  }
-});
-
-// =====================================================================
-// GET /api/tesoreria/cxp/estado-cuenta/:id_proveedor - Extracto de Proveedor
-// =====================================================================
-tesoreriaRouter.get('/cxp/estado-cuenta/:id_proveedor', async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const { id_proveedor } = req.params;
-
-    const provRes = await query(`SELECT * FROM proveedores WHERE id_proveedor = $1`, [id_proveedor]);
-    if (provRes.rows.length === 0) {
-      return res.status(404).json({ error: 'Proveedor no encontrado.' });
-    }
-
-    const cxpList = await query(
-      `SELECT c.*,
-              COALESCE((SELECT json_agg(pg ORDER BY pg.id_pago ASC) FROM cxp_pagos pg WHERE pg.id_cxp = c.id_cxp), '[]'::json) AS pagos_aplicados
-       FROM cxp_cuentas c
-       WHERE c.id_proveedor = $1
-       ORDER BY c.id_cxp ASC`,
-      [id_proveedor]
-    );
-
-    const saldoTotal = cxpList.rows.reduce((acc, row) => acc + parseFloat(row.monto_saldo), 0);
-
-    return res.status(200).json({
-      proveedor: provRes.rows[0],
-      total_saldo_pendiente: parseFloat(saldoTotal.toFixed(2)),
-      obligaciones: cxpList.rows
-    });
-  } catch (error: any) {
-    console.error('[Error en GET /api/tesoreria/cxp/estado-cuenta/:id_proveedor]:', error);
-    return res.status(500).json({ error: 'Error interno al consultar extracto de proveedor.' });
-  }
-});
