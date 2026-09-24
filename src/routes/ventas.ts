@@ -213,9 +213,8 @@ ventasRouter.post('/', requireRole('ADMIN', 'VENTAS', 'SUPERVISOR'), async (req:
     const nuevaVenta = ventaResult.rows[0];
     const idVenta = nuevaVenta.id_venta;
 
-    // 5. Insertar Detalles de Venta y Movimientos en Kardex
+    // 5. Insertar Detalles de Venta (El trigger PostgreSQL trg_descontar_kardex_venta actualiza Kardex atómicamente)
     for (const item of itemsValidados) {
-      // Inserción en ventas_detalle
       await client.query(
         `INSERT INTO ventas_detalle (
           id_venta, id_almacen, codigo_producto, cantidad, precio_unitario, subtotal, numero_serie, numero_lote
@@ -227,46 +226,6 @@ ventasRouter.post('/', requireRole('ADMIN', 'VENTAS', 'SUPERVISOR'), async (req:
           item.cantidad,
           item.precio_unitario,
           item.subtotal,
-          item.numero_serie || null,
-          item.numero_lote || null
-        ]
-      );
-
-      // Obtener último saldo en Kardex con lock FOR UPDATE
-      const kardexLock = await client.query(
-        'SELECT saldo_cantidad, saldo_valorado, costo_unitario FROM kardex_movimientos WHERE id_almacen = $1 AND codigo_producto = $2 ORDER BY id_kardex DESC LIMIT 1 FOR UPDATE',
-        [item.id_almacen, item.codigo_producto]
-      );
-
-      const saldoAnteriorCantidad = kardexLock.rows.length > 0 ? Number(kardexLock.rows[0].saldo_cantidad) : 0;
-      const saldoAnteriorValorado = kardexLock.rows.length > 0 ? Number(kardexLock.rows[0].saldo_valorado) : 0;
-      const costoUnitarioKardex = kardexLock.rows.length > 0 ? Number(kardexLock.rows[0].costo_unitario) : item.precio_costo;
-
-      const nuevoSaldoCantidad = saldoAnteriorCantidad - item.cantidad;
-      if (nuevoSaldoCantidad < 0) {
-        await client.query('ROLLBACK');
-        res.status(400).json({
-          error: `Stock insuficiente en almacén para ${item.codigo_producto}. Saldo disponible: ${saldoAnteriorCantidad}, Solicitado: ${item.cantidad}`
-        });
-        return;
-      }
-      const nuevoSaldoValorado = Math.max(0, saldoAnteriorValorado - (item.cantidad * costoUnitarioKardex));
-
-      // Inserción en kardex_movimientos
-      await client.query(
-        `INSERT INTO kardex_movimientos (
-          id_almacen, codigo_producto, tipo_movimiento, id_documento_ref,
-          cantidad_entrada, cantidad_salida, saldo_cantidad, costo_unitario, saldo_valorado,
-          numero_serie, numero_lote
-        ) VALUES ($1, $2, 'VENTA', $3, 0.00, $4, $5, $6, $7, $8, $9)`,
-        [
-          item.id_almacen,
-          item.codigo_producto,
-          idVenta,
-          item.cantidad,
-          nuevoSaldoCantidad,
-          costoUnitarioKardex,
-          nuevoSaldoValorado,
           item.numero_serie || null,
           item.numero_lote || null
         ]
@@ -294,6 +253,10 @@ ventasRouter.post('/', requireRole('ADMIN', 'VENTAS', 'SUPERVISOR'), async (req:
   } catch (error: any) {
     await client.query('ROLLBACK');
     console.error('[Error en POST /api/ventas]:', error.message);
+    if (error.message && (error.message.includes('Stock insuficiente') || error.message.includes('No existen registros de inventario'))) {
+      res.status(400).json({ error: error.message });
+      return;
+    }
     res.status(500).json({ error: 'Error interno al procesar la venta.' });
   } finally {
     client.release();
