@@ -953,7 +953,7 @@ export function getPortalHtml(): string {
                 <option value="GET|/api/administracion/periodos|">GET /api/administracion/periodos (Períodos Fiscales)</option>
                 <option value="GET|/api/contabilidad/cuentas|">GET /api/contabilidad/cuentas (Plan Contable)</option>
                 <option value="GET|/api/contabilidad/balance-sumas-saldos?gestion=2026|">GET /api/contabilidad/balance-sumas-saldos (Sumas y Saldos)</option>
-                <option value="POST|/api/auth/login|{\\"correo\\":\\"admin@diremor.bo\\",\\"password_hash\\":\\"Admin123*!\\"}">POST /api/auth/login (Autenticación JWT)</option>
+                <option value="POST|/api/auth/login|{\\"username\\":\\"admin\\",\\"password\\":\\"Diremor2026!\\"}">POST /api/auth/login (Autenticación JWT)</option>
               </select>
             </div>
 
@@ -996,12 +996,12 @@ export function getPortalHtml(): string {
         <button class="btn btn-sm btn-outline" onclick="toggleAuthModal()">✕</button>
       </div>
       <div class="form-group">
-        <label class="form-label" for="login-email">Correo Electrónico</label>
-        <input type="email" id="login-email" class="form-control" value="admin@diremor.bo">
+        <label class="form-label" for="login-username">Usuario</label>
+        <input type="text" id="login-username" class="form-control" value="admin">
       </div>
       <div class="form-group">
-        <label class="form-label" for="login-pass">Contraseña</label>
-        <input type="password" id="login-pass" class="form-control" value="Admin123*!">
+        <label class="form-label" for="login-password">Contraseña</label>
+        <input type="password" id="login-password" class="form-control" value="Diremor2026!">
       </div>
       <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem;">
         <button class="btn btn-primary" style="flex: 1;" onclick="ejecutarLogin()">Iniciar Sesión</button>
@@ -1067,24 +1067,24 @@ export function getPortalHtml(): string {
     }
 
     async function ejecutarLogin() {
-      const correo = document.getElementById('login-email').value;
-      const password_hash = document.getElementById('login-pass').value;
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
 
       try {
         const res = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ correo, password_hash })
+          body: JSON.stringify({ username, password })
         });
         const data = await res.json();
         if (res.ok) {
           token = data.token;
-          currentUser = data.usuario;
+          currentUser = data.user;
           localStorage.setItem('diremor_token', token);
           localStorage.setItem('diremor_user', JSON.stringify(currentUser));
           actualizarInterfazUsuario();
           toggleAuthModal();
-          showToast('Bienvenido, ' + currentUser.nombre_completo, 'success');
+          showToast('Bienvenido, ' + (currentUser.nombre_completo || currentUser.username), 'success');
         } else {
           showToast(data.error || 'Credenciales inválidas', 'error');
         }
@@ -1106,7 +1106,7 @@ export function getPortalHtml(): string {
     function actualizarInterfazUsuario() {
       const nameEl = document.getElementById('user-display-name');
       if (currentUser) {
-        nameEl.innerText = currentUser.nombre_completo + ' (' + currentUser.rol + ')';
+        nameEl.innerText = (currentUser.nombre_completo || currentUser.username) + ' (' + currentUser.rol + ')';
       } else {
         nameEl.innerText = 'Iniciar Sesión';
       }
@@ -1134,12 +1134,12 @@ export function getPortalHtml(): string {
           const res = await fetch('/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ correo: 'admin@diremor.bo', password_hash: 'Admin123*!' })
+            body: JSON.stringify({ username: 'admin', password: 'Diremor2026!' })
           });
           if (res.ok) {
             const data = await res.json();
             token = data.token;
-            currentUser = data.usuario;
+            currentUser = data.user;
             localStorage.setItem('diremor_token', token);
             localStorage.setItem('diremor_user', JSON.stringify(currentUser));
             actualizarInterfazUsuario();
